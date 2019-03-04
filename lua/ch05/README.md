@@ -3,12 +3,12 @@
  
  函数参数包含在小括号里，如果函数没有参数，用空的小括号。特殊情况是，如果函数只有一个参数且这个参数是文字字符串或表构造函数，小括号是默认的。
  ```lua
-print "Hello World"     <-->    print("Hello World")
-dofile 'a.lua'                 <-->    dofile('a.lua')
-print [[ a multi-line      <-->  print([[a multi-line
+print "Hello World"         <-->    print("Hello World")
+dofile 'a.lua'              <-->    dofile('a.lua')
+print [[ a multi-line       <-->  print([[a multi-line
     message]]                       message]])
 f{x=10, y=20}               <-->   f({x=10, y=20})
-type{}                            <-->   type({})
+type{}                      <-->   type({})
 ```
 
 lua 提供了对象调用函数的语法糖。o:foo(x)代替0.foo(o, x)。
@@ -54,7 +54,7 @@ Lua 调整返回参数个数根据当前调用环境。两种情况如下：
 Lua里有个特别的函数 `table.unpack` 传入数组，返回所有数组值
 ```lua
 print(talbe.unpack{10, 20, 30})     --> 10  20  30
-a, b = table.unpack{10, 20, 30}    --> a=10, b=20, 30 is discarded
+a, b = table.unpack{10, 20, 30}     --> a=10, b=20, 30 is discarded
 ```
 upack 函数可以指定参数返回区间
 ```lua

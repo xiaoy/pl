@@ -13,7 +13,7 @@ function values(t)
  t = {10, 20, 30)
  iter = values(t)                   -- 创建遍历器
  while true do
-    local element = iter()       -- 调用遍历器
+    local element = iter()          -- 调用遍历器
     if element == nil then break end
     print(element)
 end
