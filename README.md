@@ -11,6 +11,8 @@ GitHub 是为程序员学习工作打造的最好平台。这个分支专门用�
 ## C#
 
 ## LUA
+[学习笔记](lua/README.md)  
+[资源](lua/Resources.md)
 
 ## PYTHON
 
