@@ -1,3 +1,5 @@
+-- this example for 9.1
+
 -- 返回 yield 参数
 co = coroutine.create(function(a, b)
     coroutine.yield(a + b, a - b)

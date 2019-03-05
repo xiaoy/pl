@@ -49,3 +49,32 @@ print(coroutine.resume(co))         --> true 6 7
 ```
 
 ## 9.2 管道和过滤
+协程最经典的模型是生产消费问题。协程提供了理想工具匹配生产者和消费者，因为 resume-yield 转换调用者和被调用者的关系。
+
+管道是基于多进程共享内存的一种实现，进程切换消耗高。  
+协程是非抢占式多线程的一种实现方式，协程之间的切换，就是函数调用。
+
+## 9.3 协程实现遍历器
+循环遍历器是典型的**生产-消费**模式：遍历器生产，循环消费。  
+使用`coroutine.wrap`函数返回一个函数，调用这个函数即可`resume`协程。
+```lua
+-- 正常装配遍历器
+function permutations(a)
+    local co = coroutine.create(function() permgen(a) end)
+    return function()
+        local code, res = coroutine.resume()
+        return res
+    end
+end
+
+-- 使用 warp 函数装配
+function permutations(a)
+    return coroutine.wrap(function() permgen(a) end)
+end
+```
+`coroutine.wrap` 比起 `coroutine.create` 使用起来更加简单，但不会返回错误，只会抛出异常。可扩展性没有`coroutine.create`灵活。
+
+## 9.4 非竞争式多线程
+协程允许某种方式的协作线程。每个协程等价于一个线程。通过 `yield-resume` 切换控制。但是和多线程比起来，协程是*非抢占式*的，当一个协程运行起来，不能从外部停止。
+
+由于协程运行时会将整个进程占用，只有协程运行结束，才回到主流程。所以这里使用多协程模拟多线程，要对应做的事情支持异步回调。

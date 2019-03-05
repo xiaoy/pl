@@ -6,18 +6,18 @@ Lua 是一门简小精悍的编程语言。在游戏领域大放异彩，是游�
 ## 01 简介
 [笔记](ch01/README.md)
 ## 02 类型和值
-[笔记](ch01/README.md)
+[笔记](ch02/README.md)
 ## 03 表达式
-[笔记](ch01/README.md)
+[笔记](ch03/README.md)
 ## 04 语句
-[笔记](ch01/README.md)
+[笔记](ch04/README.md)
 ## 05 函数
-[笔记](ch01/README.md)
+[笔记](ch05/README.md)
 ## 06 高级函数
-[笔记](ch01/README.md)
+[笔记](ch06/README.md)
 ## 07 迭代器和通用for
-[笔记](ch01/README.md)
+[笔记](ch07/README.md)
 ## 08 编译，执行，和异常
-[笔记](ch01/README.md)
-
+[笔记](ch08/README.md)
 ## 09 协程
+[笔记](ch09/README.md)
