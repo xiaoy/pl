@@ -3,6 +3,7 @@
 二元操作符：'+'(加法）, '-'（减法）, '*'(乘法） , '/' （除法）, '^' (指数) , '%'  (求余)  
 一元操作符：'-' (负数)
 
+求余对应的代码
 ```lua
 a % b == a - math.floor(a/b)*b
 ```
@@ -35,10 +36,10 @@ a ? b : c
 max = (x > y) and x or y
 ```
 ## 3.4 连接
-lua 里通过 '..' 连接字符串，如果是number 类型，则转换为string在连接
+lua 里通过 `'..'` 连接字符串，如果是number 类型，则转换为string再连接
 
 ## 3.5 长度运算符
-长度操作符作用在strings和talbes， strings返回bytes数，talbes返回数列长度  
+长度操作符作用在strings和tables， strings返回bytes数，tables返回数列长度  
 
 长度妙用
 ```lua
