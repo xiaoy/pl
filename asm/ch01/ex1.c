@@ -24,7 +24,7 @@ int binary_to_decimal(char* buff,int size)
     return sum;
 }
 int main() {
-    char buff[17] = {'0'};
+    char buff[32] = {'0'};
     printf("input 16 bit binary binary:");
     scanf("%16s", buff);
     int ret = binary_to_decimal(buff, sizeof(buff));
