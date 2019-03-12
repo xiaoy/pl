@@ -11,3 +11,7 @@
 
 ## 工具
 [在线反汇编网站](https://godbolt.org/)
+
+## 使用参考表
+ascii 表  
+![](res/ASCII-Table.png)
