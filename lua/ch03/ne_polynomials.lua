@@ -7,7 +7,6 @@ function polynomial_sum(coefficients, x)
     for i = 1, #coefficients do
         sum = sum + coefficients[i] *  mutiply_ret
         mutiply_ret = mutiply_ret * x 
-        print(coefficients[i], mutiply_ret, sum)
     end
     return sum
 end

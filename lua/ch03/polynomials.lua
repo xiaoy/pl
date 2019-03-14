@@ -6,8 +6,7 @@
 function polynomial_sum(coefficients, x)
     local sum = 0
     for i = 1, #coefficients do
-        sum = sum + coefficients[i] * x^(i - 1)
-        print(coefficients[i], x^(i - 1), sum)
+        sum = sum + coefficients[i] * x^(#coefficients - i)
     end
     return sum
 end
