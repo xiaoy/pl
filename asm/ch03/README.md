@@ -106,7 +106,7 @@ mov eax, myVar          ; 运行时将myVar 拷贝到eax，运行时指令Intel�
 指令的另一个作用是定义定义程序**段（segments）**，比如`.data`数据段，可以定义变量, `.code` 程序段，可以执行指令， `stack 100h`定义程序运行时的栈大小。
 
 ### 3.1.10 指令（Instructions)
-*指令（instruction）*在汇编时被汇编器转换为机器语言字节，然后在运行时被CPU加载执行，一条指令有如下四个部分：
+*指令（instruction）* 在汇编时被汇编器转换为机器语言字节，然后在运行时被CPU加载执行，一条指令有如下四个部分：
 
 * Label (optional)
 * Instruction mnemonic (required)
@@ -240,6 +240,7 @@ imul eax, ebx, 5    ; exb multiplied by 5, and the product is stored to eax
 汇编器识别基础系列固有数据类型，通过数据类型的长度（byte， word， doubleword，and soone）来识别，和数据是否为有符号，或整数，浮点数无关。比如 `DWORD, SDWORD, REAL4`都是存储为32位整数。
 
 表3-2
+
 | 类型   | 说明                                   |
 | ------ | -------------------------------------- |
 | BTYE   | 8-bit 无符号整型，B代表byte            |
@@ -264,6 +265,7 @@ imul eax, ebx, 5    ; exb multiplied by 5, and the product is stored to eax
 * **Initializer** 至少要有一个初始化值，甚至为0时。如果有多个，使用逗号隔开。如果是随机初始值，使用 `?` 初始化。
 
 表3-3 过时数据指令
+
 | 指令 | 说明                    |
 | ---- | ----------------------- |
 | DB   | 8-bit 整型              |
