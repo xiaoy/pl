@@ -325,7 +325,9 @@ call DumpRegs
 ```
 
 ### 5.4.4 库测试程序
-
+* [Ingeger I/O test](InputLoop.asm)
+* [Random Integers](TestLib2.asm)
+* [Performance Timing](TestLib3.asm)
 ## 5.5 64-bit 汇编编程
 ### 5.5.1 Irvine64 库
 
