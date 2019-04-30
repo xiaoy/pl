@@ -328,11 +328,79 @@ call DumpRegs
 * [Ingeger I/O test](InputLoop.asm)
 * [Random Integers](TestLib2.asm)
 * [Performance Timing](TestLib3.asm)
+
 ## 5.5 64-bit 汇编编程
 ### 5.5.1 Irvine64 库
+```asm
+; 换行
+; Crlf
 
+; 64位随机数 [0, 2^64 - 1]
+; outputs:RAX
+; Random64
+
+; 设置随机种子
+; Randomize
+
+; 读取64-bit 有符号整数，回车符结束输入
+; output:RAX
+; ReadInt64
+
+; 读取字符串，回车符结束输入
+; input:RDX->存储字符串地址,RCX->最大可输入字符值加1
+; output:RAX->输入字符长度
+; ReadString
+
+; 字符串对比
+; input:RSI->source string, RDI->target string
+; output:Zero,Carry flag as same the CMP instruction
+; Str_compare
+
+; 拷贝字符串
+; input:RSI->srouce string offset, RDI->target string offset
+; Str_copy
+
+; 返回null结尾字符串长度
+; input:RCX->string offset
+; output:RAX->string length
+; Str_length
+
+; 显示64-bit有符号整数
+; input:RAX
+; WriteInt64
+
+; 显示64-bit 16进制整数
+; input:RAX
+; WriteHex64
+
+; 显示16进制数1-byte，2-byte，4-byte or 8-byte 格式
+; input:RAX->display value, RBX->diplay size(1,2,4,8)
+; WriteHexB
+
+; 显示null结尾字符串
+; input:RDX->input string offset
+; WriteString
+```
 ### 5.5.2 调用64-bit函数
+传递参数使用`CALL`即可调用函数。
+```asm
+mov rax, 12345678h
+call WriteHex64
+```
 
-### 5.5.3 x64 调用
+由于64位库没有使用include先包含申明的函数，所以要自己添加 **PROTO**指令来提前申明要使用的函数。
+```asm
+ExitProcess PROTO
+WriteHex64 PROTO
+```
+### 5.5.3 x64 调用规则
+Microsoft遵循调用64-bit函数称作 *Microsoft x64 Calling Convention* 的规则。这个规则被C/C++编译器使用，也被 **Windows Application Programming Interface (API)**使用。这个规则只用在调用Windows API，或者调用C或者C++实现的函数。以下是基本条例：
+
+1. `CALL`指令将`RSP`的值减8，因为地址是64-bit长
+2. 前四个函数参数依次放在 `RCX,RDX,R8,R9`寄存器
+3. 分配至少32bytes的长度用来存储寄存器参数的值是调用者的职责
+4. 当调用函数，RSP的值必须按16-byte对齐。`CALL`指令压入8-byte返回值在栈上，因此调用程序必须将栈指针减8
+
 
 ### 5.5.4 调用函数例子
+[CallProc_64.asm](CallProc_64.asm)
