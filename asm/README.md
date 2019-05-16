@@ -12,8 +12,8 @@
 [笔记](ch04/README.md)
 ## 05 函数
 [笔记](ch05/README.md)
-
 ## 06 条件流程
+[笔记](ch06/README.md)
 
 ## 07 整数运算
 

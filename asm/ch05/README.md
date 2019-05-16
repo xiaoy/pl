@@ -19,20 +19,20 @@ ESP总是指向最后入栈值的位置。
 * 寄存器的临时存储区域，方便寄存器的存储和读取
 * 函数返回变量放在栈上
 * 通过栈传递函数变量
-* 函数里的临时变量的存储
+* 函数里临时变量的存储
 
 ### 5.1.2 PUSH 和 POP 指令
 #### PUSH 指令
 `PUSH`指令降低ESP的值（16-bit减少2，32-bit减少4），然后将源操作值拷贝到ESP指向的位置，语法如下：
 
-> PUSH reg/mem16
-> PUSH reg/mem32
+> PUSH reg/mem16  
+> PUSH reg/mem32  
 > PUSH imm32
 
 #### POP 指令
 `POP`指令现将ESP指向的值拷贝到对应的目标操作数，然后增加ESP值。语法如下：
 
-> POP reg/mem16
+> POP reg/mem16  
 > pop reg/mem32
 
 #### PUSHFD 和 POPFD 指令
@@ -46,19 +46,21 @@ ESP总是指向最后入栈值的位置。
 ## 5.2 定义和使用函数
 ### 5.2.1 PROC 指令
 #### 定义函数
-函数就是以return语句结束的程序语句块别名。函数使用`PROC`和 `ENDP` 指令来申明加函数名来申明。如果不是启动函数，都以 `RET`指令结束。`RET`强制CPU返回到函数调用的地方。
+函数就是以return语句结束的程序语句块别名。函数使用`PROC`和 `ENDP` 指令加函数名来申明。如果不是启动函数，都以 `RET`指令结束。`RET`强制CPU返回到函数调用的地方。
 
-> sample PROC
-> .
-> .
-> ret
-> sample ENDP
+```asm
+sample PROC  
+.  
+.
+ret
+sample ENDP
+```
 
 #### 函数中的Labels
 默认条件下，labels的作用域为自己所申明的函数里。也可以通过在label后面加双冒号(::)来申明为全局label。但这种方式不推荐，因为跳转出函数会破坏当前堆栈。
 
 #### 函数注释
-一个非常的好的习惯是为自己的程序添加清晰和可读的文档，一下是为函数添加注释的一些建议：
+一个非常的好的习惯是为自己的程序添加清晰和可读的文档，以下是为函数添加注释的一些建议：
 
 * 函数要完成任务的描述
 * 输入参数列表和用途，以 **Receives** 做标签
@@ -67,7 +69,7 @@ ESP总是指向最后入栈值的位置。
 
 
 ### 5.2.2 CALL和RET 指令
-`CALL`指令通过指引处理器在新的内存地址执行来调用函数。函数使用`RET`指令将处理器带到函数被调用的地址。调用机制如下：
+`CALL`指令通过指引处理器跳转到函数所在内存地址来执行函数代码。函数使用`RET`指令将处理器返回到函数被调用的地址。调用机制如下：
 
 * `CALL`指令将返回地址压入栈，然后将函数地址赋值给指令指针寄存器
 * `RET`指令从栈上弹出返回地址到指令指针寄存器
@@ -78,6 +80,7 @@ ESP总是指向最后入栈值的位置。
 
 ### 5.2.4 通过寄存器传递函数参数
 函数如果没有参数，则此函数就不能作为输入输出功能单元，没有通用性。因为寄存器是全局的，因此可以使用寄存器充当函数参数，但是使用寄存器当变量，一定确保使用完恢复寄存器的值。
+
 ### 5.2.5 例子：整数数组求和
 ```asm
 ;-----------------------------------------------------
@@ -118,9 +121,10 @@ ArraySum ENDP
 ```
 
 使用`USES`需要注意的是EAX寄存器，因为EAX被当做返回值，如果`USES`使用了EAX，在函数结尾EAX会被恢复。
+
 ## 5.3 链接外部库
 ### 5.3.1 背景信息
-需要外部链接的函数，必须提前使用 `PROTO` 指令申明。链接库分为动态库和静态库，库包含被汇编为机器码的指令。静态库的链接为汇编器从静态库拷贝对应的代码到链接的单元模块，动态库运行时跳转到对应的地址运行，动态库所有程序公用一份。程序汇编时现将外部链接函数地址留空，等到汇编结束，在将函数调用地址补上。
+需要外部链接的函数，必须提前使用 `PROTO` 指令申明。链接库分为动态库和静态库，库包含被汇编为机器码的指令。静态库的链接过程为：汇编器从静态库拷贝对应的代码到链接的单元模块。动态库运行时跳转到对应的地址运行，动态库所有程序公用一份。程序汇编时先将外部链接函数地址留空，等到汇编结束，再将函数调用地址补上。
 
 ## 5.4 Irvine32库
 ### 5.4.1 创建库的动机
@@ -128,6 +132,7 @@ ArraySum ENDP
 
 ### 5.4.2 简介
 命令符界面是定义好长度和宽度的Windows窗口。
+
 ### 5.4.3 独立函数介绍
 在Irvine32库里如下函数对于学习汇编非常实用。
 
@@ -220,7 +225,7 @@ call DumpRegs
 
 ; 将无符号10进制字符串转为32-bit二进制
 ; inputs:EDX->offset string
-;       ;ECX->string length
+;       :ECX->string length
 ; outputs:EAX->result, CF = 0 转换有效值
 
 ; 将有符号10进制字符串转换为32-bit二进制
@@ -262,12 +267,13 @@ call DumpRegs
 
 ; 读取32-bit有符号整数返回32-bit二进制
 ; outputs:EAX
-;  ReadInt
+; ReadInt
 
 ; 读取字符串
 ; inputs:EDX->offset of buffer
 ;       :ECX->maximum number of characters + 1
 ; outpus:EAX->number of read characters
+; ReadString
 
 ; 返回null结尾字符串长度
 ; inputs:EDX->string offset
@@ -382,7 +388,7 @@ call DumpRegs
 ; WriteString
 ```
 ### 5.5.2 调用64-bit函数
-传递参数使用`CALL`即可调用函数。
+使用`CALL`即可调用函数。
 ```asm
 mov rax, 12345678h
 call WriteHex64
@@ -394,11 +400,11 @@ ExitProcess PROTO
 WriteHex64 PROTO
 ```
 ### 5.5.3 x64 调用规则
-Microsoft遵循调用64-bit函数称作 *Microsoft x64 Calling Convention* 的规则。这个规则被C/C++编译器使用，也被 **Windows Application Programming Interface (API)**使用。这个规则只用在调用Windows API，或者调用C或者C++实现的函数。以下是基本条例：
+Microsoft遵循调用64-bit函数的规则，称作 *Microsoft x64 Calling Convention* 。这个规则被C/C++编译器使用，也被 **Windows Application Programming Interface (API)**使用。这个规则只用在调用Windows API，或者调用C或者C++实现的函数。以下是基本条例：
 
 1. `CALL`指令将`RSP`的值减8，因为地址是64-bit长
 2. 前四个函数参数依次放在 `RCX,RDX,R8,R9`寄存器
-3. 分配至少32bytes的长度用来存储寄存器参数的值是调用者的职责
+3. 分配至少32bytes的长度用来存储寄存器参数的值，自个过程是需要开发者自己维护
 4. 当调用函数，RSP的值必须按16-byte对齐。`CALL`指令压入8-byte返回值在栈上，因此调用程序必须将栈指针减8
 
 
