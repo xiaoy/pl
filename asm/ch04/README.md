@@ -400,7 +400,7 @@ mov al, [esi]                   ; AL = 30h
 ### 4.4.4 索引操作数（Indexed Operands）
 通过寄存器加上一个常量来寻址的方式称作索引操作数。MASM两种方式：
 
-> constant[reg]         ; 方式1
+> constant[reg]         ; 方式1  
 > [constant + reg]      ; 方式2
 
 方式一通过汇编器将变量地址作为constant来寻址：

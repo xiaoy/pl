@@ -195,7 +195,7 @@ call DumpRegs
 ; GetMseconds
 
 ; 返回窗口前景和后景颜色
-; outputs:AL(high-4bit)->background color, AL(low-4bit)->foreground color
+; outputs:AH->background color, AL->foreground color
 ; GetTextColor
 
 ; 设置光标位置
