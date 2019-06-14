@@ -24,6 +24,7 @@
 [笔记](ch09/README.md)
 
 ## 10 结构体和宏
+[笔记](ch10/README.md)
 
 ## 11 Windows 编程
 
