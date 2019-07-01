@@ -221,17 +221,19 @@ call DumpRegs
 ; 打开一个存在的文件用来读取内容
 ; inputs:EDX->filename offset
 ; outputs:EAX->file handle, read error resultis:INVALID_HANDLE_VALUE
-; call OpenInputFile
+; OpenInputFile
 
 ; 将无符号10进制字符串转为32-bit二进制
 ; inputs:EDX->offset string
 ;       :ECX->string length
 ; outputs:EAX->result, CF = 0 转换有效值
+; ParseDecimal32
 
 ; 将有符号10进制字符串转换为32-bit二进制
 ; inputs:EDX->offset string
-;       ;ECX->string length
+;       :ECX->string length
 ; outputs:EAX->result, 超出范围Overflow flag设置，并打印错误 
+; ParseInteger32
 
 ; 返回32-bit随机数
 ; outputs:EAX
