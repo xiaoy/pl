@@ -36,6 +36,7 @@
 [笔记](ch13/README.md)
 
 ## 14 16位 MS-DOS 编程
+[笔记](ch14/README.md)
 
 ## 15 硬盘基础
 
