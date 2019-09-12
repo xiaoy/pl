@@ -58,14 +58,14 @@ MIPS 有两种寄存器命名方式：数字方式（从 \$0 到 \$31)，或者�
 
 GCC 汇编输出通过数字寄存器：
 ```asm
-    j $31
-    nop
+j $31
+nop
 ```
 
 使用IDA 使用名字：
 ```asm
-    j $ra
-    nop
+j $ra
+nop
 ```
 
 第一条指令是跳转指令(J or JR)返回到调用控制流程，跳转到 \$31(or \$RA) 寄存器，这和 ARM里的链接寄存器同理。
@@ -106,14 +106,14 @@ ARM 使用 寄存器 R0来存放返回值，因此123拷贝到 R0。
 ### 1.4.3 MIPS
 GCC 汇编输出如下：
 ```asm
-    j   $31
-    li  $2, 123
+j   $31
+li  $2, 123
 ```
 
 IDA 使用名字：
 ```asm
-    jr $ra
-    li $v0, 0x7B
+jr $ra
+li $v0, 0x7B
 ```
 
 /$2 (or /$V0) 寄存器用来存储函数返回值。`LI` 代表 "Load Immediate"，等价 `MOV`。
@@ -158,7 +158,7 @@ _main PROC
 _main ENDP
 ```
 
-GCC，编译后 使用 IDA打开结果如下：
+GCC，编译后 使用 IDA打开结果如下，intel 风格：
 
 ```asm
 main                proc near
@@ -175,9 +175,195 @@ var_10              = dword ptr -10h
                     retn
 main                endp
 ```
-## 1.6  函数前戏和后戏(Function prologue and epilogue)
 
+GCC:AT&T 语法，去除宏后的精简代码如下：
+```asm
+.LC0:
+        .string "hello, world\n"
+
+main:
+        pushl %ebp
+        movl %esp, %ebp
+        andl $-16, %esp
+        subl $16, %esp
+        movl $.LC0, (%ebp)
+        call printf
+        movl $0, %eax
+        leave
+        ret
+```
+Intel 和 AT&T语法区别如下：
+
+* 源和目标操作数顺序相反
+    * intel语法为 `<instruction> <desination operand> <source operand>`
+    * AT&T语法为 `<instruction> <source operand> <desination operand>`
+    * 简单的记忆方式，intel可以认为是 **=**，AT&T 认为是 **->**
+* AT&T：在寄存器名字前，寄存器名字前要添加 *%*，在输在前要加 *$*，方括号被圆括号代替
+* AT&T：指令添加后缀来定义操作数尺寸
+    * - q -> quad(64 bits)
+    * - l -> long(32 bits)
+    * - w -> word(16 bits)
+    * - b -> byte(8 bits)
+
+### 1.5.2 x86-64
+64-bit MSVC:
+
+```asm
+$SG5081 DB 'hello, world', 0aH, 00H
+
+main PROC
+$LN3:
+  sub rsp, 40 ; 00000028H               ; shadow space，用来保存，和后续恢复寄存器值
+  lea rcx, OFFSET FLAT:$SG5081
+  call printf
+  xor eax, eax
+  add rsp, 40 ; 00000028H
+  ret 0
+main ENDP
+```
+Win64，函数前4个参数通过寄存器`RCX,RDX,R8,R9`来传递，其余的通过栈来传递，好处是寄存器访问速度快。
+
+GCC:x86-64 linux:
+
+```asm
+.LC0:
+  .string "hello, world"
+main:
+  push rbp
+  mov rbp, rsp
+  mov edi, OFFSET FLAT:.LC0
+  call puts
+  mov eax, 0
+  pop rbp
+  ret
+```
+
+Linux, *BSD 和 Mac OSX 前6个参数通过寄存器 `RDI,RSI,RDX,RCX,R8,R9`，其余用栈来传递。
+
+地址传到edi是因为，`mov edi, OFFSET FLAT:.LC0` 只使用5字节编码，如果使用 64位需要7字节编码。
+
+### 1.5.3 GCC-其他
+匿名C-字符串是 const 类型，分配在常量段的C-字符串不可改变，编译器也许使用部分字符串来优化。
+
+```C++
+#include <stdio.h>
+
+int f1()
+{
+    printf("world\n");
+}
+
+int f2()
+{
+    printf("hello world\n");
+}
+
+int main()
+{
+    f1();
+    f2();
+}
+```
+
+MSVC 正常是分配两个字符串，GCC编译如下：
+```asm
+f1  proc near
+s   = dword ptr -1Ch
+    sub esp, 1Ch
+    mov [esp+1Ch+s], offset s ; "world\n"
+    call _puts
+    add esp, 1Ch
+    retn
+f1 endp
+
+f2 proc near
+    s = dword ptr -1Ch
+    sub esp, 1Ch
+    mov [esp+1Ch+s], offset aHello ; "hello "
+    call _puts
+    add esp, 1Ch
+    retn
+f2 endp
+
+aHello db 'hello '
+s db 'world',0xa,0
+```
+## 1.6  函数前戏和后戏(Function prologue and epilogue)
+函数执行前代码指纹：
+```asm
+push ebp                    ; save the value of ebp
+mov ebp,esp                 ; set the value of ebp to the esp value
+sub esp,X                   ; allocate space on the stack for local variables
+```
+
+函数执行后代码指纹
+```asm
+    mov esp, ebp
+    pop ebp
+    ret 0
+```
 ## 1.7 栈
+栈是计算机科学最基础的数据结果。
+
+栈是进程里的一块内存，栈指针(esp, rsp)在x86，或x64 指向这块内存。有两种操作：
+
+1. `push` 指令将操作数写入内存，并且栈指针大小降低
+2. `pop` 将栈顶的值写入操作数，并且栈指针增大
+
+### 1.7.1 为啥栈是反向的
+在计算机刚发明时，有栈和堆两种类型的内存，堆从小到大增长，栈从大到小增长。
+
+### 1.7.2 栈的用处
+#### 保存返回地址
+x86
+当使用 `call` 指令调用另一个函数时，在 `call`之后的地址保存在栈，然后跳转到`call`对应的操作值。
+
+`call` 指令等价于：`push address_after_call / jmp operand_address`。
+
+`RET` 从栈获取值，然后跳转到对应的地址。`RET`指令等价于：`pop tmp / jmp tmp`。
+
+#### 传递函数参数
+在x86架构传递参数最流行的方式称作“cdecl”：
+```asm
+push arg3
+push arg2
+push arg1
+call f
+add esp, 12     ; 4*3=12
+```
+
+被调用函数通过栈指针获取参数。函数`f()` 的栈结构如下：
+
+| 栈地址  | 内容                                |
+| :------ | :---------------------------------- |
+| ESP     | return address                      |
+| ESP+4   | argument#1, markded in IDA as arg_0 |
+| ESP+8   | argument#2, markded in IDA as arg_4 |
+| ESP+0xC | argument#3, markded in IDA as arg_8 |
+| ...     | ...                                 |
+
+被调用函数没有被传递参数的个数信息。类似`printf()`函数通过 *%* 来获取参数个数。
+
+传递参数还可以使用全部变量，但是在递归调用时，每层的调用，都需要独立参数。并且不是线程安全的。
+
+#### 局部变量存储
+函数通过让栈指针向栈底方向减少即可为局部变量分配空间。函数`alloca()` 在栈上分配空间，不需要调用`free`释放。
+
+#### 1.7.3 栈的典型布局
+在32-bit环境中，在函数开头在第一条指令运行前，栈结构如下：
+
+| 栈地址  | 内容                                     |
+| :------ | :--------------------------------------- |
+| ...     | ...                                      |
+| ESP-0xC | local variable#2, marked in IDA as var_8 |
+| ESP-8   | local variable#1, marked in IDA as var_4 |
+| ESP-4   | saved value of EBP                       |
+| ESP     | return address                           |
+| ESP+4   | argument#1, markded in IDA as arg_0      |
+| ESP+8   | argument#2, markded in IDA as arg_4      |
+| ESP+0xC | argument#3, markded in IDA as arg_8      |
+| ...     | ...                                      |
+
 
 ## 1.8 printf() 多参数
 
