@@ -6,9 +6,9 @@
 
 ## [3 稍微高级的例子](chapter_03/README.md)
 
-## 4 JAVA
+## [4 JAVA](chapter_04/README.md)
 
-## 5 探寻代码里有趣/重要的特征
+## [5 探寻代码里有趣/重要的特征](chapter_05/README.md)
 
 ## 6 系统相关
 
