@@ -12,9 +12,9 @@
 
 ## [6 系统相关](chapter_06/README.md)
 
-## 7 工具
+## [7 工具](chapter_07/README.md)
 
-## 8 学习例子
+## [8 学习例子](chapter_08/README.md)
 
 ## 9 专有文件格式反汇编
 
