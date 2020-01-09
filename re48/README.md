@@ -16,10 +16,10 @@
 
 ## [8 学习例子](chapter_08/README.md)
 
-## 9 专有文件格式反汇编
+## [9 专有文件格式反汇编](chapter_09/README.md)
 
-## 10 动态库检测
+## [10 动态二进制检测](chapter_10/README.md)
 
-## 11 其他事情
+## [11 其他事情](chapter_11/README.md)
 
-## 12 值的阅读的书籍/博客
+## [12 值的阅读的书籍/博客](chapter_12/README.md)
