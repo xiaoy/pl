@@ -116,7 +116,7 @@ jr $ra
 li $v0, 0x7B
 ```
 
-/$2 (or /$V0) 寄存器用来存储函数返回值。`LI` 代表 "Load Immediate"，等价 `MOV`。
+`$2 (or $V0)` 寄存器用来存储函数返回值。`LI` 代表 "Load Immediate"，等价 `MOV`。
 
 另外的指令是跳转指令(J or JR)返回到调用地址。
 
@@ -138,7 +138,7 @@ int main()
 MSVC 编译，命令如下：
 > cl 1.cpp /Fa1.asm
 
-/Fa 开关让编译器生成汇编 listing文件
+/Fa 开关让编译器生成汇编 listing 文件
 
 汇编结果如下：
 ```asm
@@ -198,12 +198,12 @@ Intel 和 AT&T语法区别如下：
     * intel语法为 `<instruction> <desination operand> <source operand>`
     * AT&T语法为 `<instruction> <source operand> <desination operand>`
     * 简单的记忆方式，intel可以认为是 **=**，AT&T 认为是 **->**
-* AT&T：在寄存器名字前，寄存器名字前要添加 *%*，在数字前要加 *$*，方括号被圆括号代替
+* AT&T：在寄存器名字前，寄存器名字前要添加 `%`，在数字前要加 `$` ，方括号被圆括号代替
 * AT&T：指令添加后缀来定义操作数长度
-    * - q -> quad(64 bits)
-    * - l -> long(32 bits)
-    * - w -> word(16 bits)
-    * - b -> byte(8 bits)
+    *  q -> quad(64 bits)
+    *  l -> long(32 bits)
+    *  w -> word(16 bits)
+    *  b -> byte(8 bits)
 
 ### 1.5.2 x86-64
 64-bit MSVC:
@@ -238,7 +238,7 @@ main:
   ret
 ```
 
-Linux, *BSD 和 Mac OSX 前6个参数通过寄存器 `RDI,RSI,RDX,RCX,R8,R9`，其余用栈来传递。
+Linux, BSD 和 Mac OSX 前6个参数通过寄存器 `RDI,RSI,RDX,RCX,R8,R9`，其余用栈来传递。
 
 地址传到edi是因为，`mov edi, OFFSET FLAT:.LC0` 只使用5字节编码，如果使用 64位需要7字节编码。
 
@@ -303,11 +303,11 @@ sub esp,X                   ; allocate space on the stack for local variables
     ret 0
 ```
 ## 1.7 栈
-栈是计算机科学最基础的数据结果。
+栈是计算机科学最基础的数据结构。
 
 栈是进程里的一块内存，栈指针(esp, rsp)在x86，或x64 指向这块内存。有两种操作：
 
-1. `push` 指令将操作数写入内存，并且栈指针大小降低
+1. `push` 指令将操作数写入内存，并且栈指针大小减小
 2. `pop` 将栈顶的值写入操作数，并且栈指针增大
 
 ### 1.7.1 为啥栈是反向的
@@ -315,8 +315,7 @@ sub esp,X                   ; allocate space on the stack for local variables
 
 ### 1.7.2 栈的用处
 #### 保存返回地址
-x86
-当使用 `call` 指令调用另一个函数时，在 `call`之后的地址保存在栈，然后跳转到`call`对应的操作值。
+在x86架构下，当使用 `call` 指令调用另一个函数时，在 `call`之后的地址保存在栈，然后跳转到`call`对应的操作值。
 
 `call` 指令等价于：`push address_after_call / jmp operand_address`。
 
@@ -447,7 +446,7 @@ _DATA ENDS
 
 _x$ = -4 ; size = 4
 _main PROC
-    push ebp
+    push eb
     mov ebp, esp
     push ecx                                ; 为局部变量分配空间
     push OFFSET $SG4502                     ; 压入printf 第一个参数字符串地址
@@ -549,7 +548,7 @@ jump_table  dd case1
             dd case5
 ```
 ## 1.16 循环
-2到9循环框架：
+循环整数范围2-9，程序框架如下：
 
 ```asm
     mov [counter], 2 ; initialization
@@ -750,8 +749,8 @@ Single Instruction, Multiple Data(SIMD)，一条指令，处理多个数据。
 
 * 几乎所有的寄存器（除了 FPU 和 SIMD）扩展到64位并且使用 **R** 前缀。
 * 8 个额外的寄存器被添加。现在通用寄存器是：`RAX, RBX, RCX, RDX, RBP, RSP, RSI, RDI, R8, R9, R10, R11, R12, R13, R14, R15`。
-* 依然可以反问旧的寄存器
-* 新的 R8-R15 寄存器 有自己的低端寄存器：R8D-R15D(32-bit 部分),R8W-R15W(16-bit 部分)，R8L-R15L(8-bit 部分)
+* 依然可以访问旧的寄存器
+* 新的 R8-R15 寄存器 有自己的低位寄存器：R8D-R15D(32-bit 部分),R8W-R15W(16-bit 部分)，R8L-R15L(8-bit 部分)
 * Win 64， 函数调用不同，前四个参数存储在 `RCX, RDX, R8, R9` 中
 * System V AMD64 ABI 使用 6个寄存器 `RDI, RSI, RDX, RCX, R8, R9`
 * C/C++ int 类型依然是 32-bit
