@@ -12,19 +12,19 @@
 ### 输入/输出(Input/Output)
 *流(stream)*  作为数据源和目标
 
-|流|描述|是否缓冲|
-|:---:|:---|:---:|
-|cin|"characters from std**in**"|是|
-|cout|"characters from std**out**"|是|
-|cerr|"characters from std**error**"|否|
-|clog|"characters from std**error**"|是|
+|  流   | 描述                           | 是否缓冲 |
+| :---: | :----------------------------- | :------: |
+|  cin  | "characters from std**in**"    |    是    |
+| cout  | "characters from std**out**"   |    是    |
+| cerr  | "characters from std**error**" |    否    |
+| clog  | "characters from std**error**" |    是    |
 
 *流操作符(stream operator)*
 
-|操作符|描述|方向|
-|:---:|:---:|:---:|
-|`>>`|从流获取内容赋值到变量|`source >> target`|
-|`<<`|将变量内容输出到流|`target << source`|
+| 操作符 |          描述          |        方向        |
+| :----: | :--------------------: | :----------------: |
+|  `>>`  | 从流获取内容赋值到变量 | `source >> target` |
+|  `<<`  |   将变量内容输出到流   | `target << source` |
 
 流操作符有如下特点：
 
@@ -1605,4 +1605,72 @@ int* p2;            // int pointer
 
 ![](../res/const_pointer.png)
 
+使用指针的问题：
+
+* 指针可以指向`nullptr / 0`，比如`*p = 5;`
+* 当使用指针写/读变量时，*解应用*非常的繁琐，比如 `*p = *p * *p + (2 * *p +1);`
+* 对于非指针变量参数传递非常繁琐和易错，比如 `int x = 3, y = 4; swap_values(&x, &y);`
+
+因此能使用引用时，使用引用。
+
+C++11中参数传递和返回值最佳实践指南：
+
+返回值：
+
+* 值 => 如果`copy`或 `move` 消耗低使用值传递，否则使用智能指针
+* 引用 => 仅仅当变量不在函数作用域内
+* 工厂模式 => 智能指针
+* 多个类型 => `tuple<...>` 比 `struct/class` 更好
+
+参数：
+
+* 如果需要在函数内拷贝 => 值传递
+* 如果不需在函数内拷贝 => `const` 引用传递
+* 需要函数内部修改变量 => 引用传递
+* 值可选 => 使用`optional<T> or const T*`
+* 从零时变量获取内容 => 使用右值传递
+
 ## 诊断
+术语：
+
+| 术语                       | 描述                                           |
+| :------------------------- | :--------------------------------------------- |
+| 警告(Warnings)             | 来自编译器的有用提示                           |
+| 静态分析(Static Analysis)  | 通过分析代码找出可能的运行问题                 |
+| 动态分析(Dynamic Analysis) | 通过运行程序来找出可能的运行问题，比如内存泄露 |
+| 性能分析(Profiling)        | 统计出每个函数占用的总运行时间                 |
+| 调试(Debugging)            | 查看当前运行代码对应的内存变量                 |
+| 测试(Tests)                | 对比程序运行结果和期望运行结果                 |
+| 代码覆盖率(Code Coverage)  | 统计出真正运行的代码                           |
+
+工具介绍：
+
+* gdb 用来调试
+* gprof 性能分析
+* ASAN-(Address Sanitizer) 探测内存异常bug
+  * g++, clang++
+  * 探测内存相关bugs
+    * 内存泄露
+    * 访问已经释放的内存
+    * 访问错误的栈区域
+  * 运行指令增加：
+    * 粗略增加70%运行时间
+    * 粗略增加3倍内存使用
+* UBSan-(Undefined Behaviour Sanitizer) 探测多种运行时未定义行为
+  * clang++, g++
+  * 探测运行错误
+    * 解引用空指针
+    * 从*错误的指针位置(misaligned pointers)*读取数据
+    * 整数溢出
+    * 除零
+  * 由于为了探测这些错误额外多加了25%的指令
+* Valgrind
+  * 探测运行错误
+    * 读/写已经释放了的内存或错误的栈区域
+    * 使用未初始化的变量
+    * 错误的释放内存，比如释放两次
+    * 错误使用内存分配的函数
+    * 内存泄露
+  * Windows
+    * [Dr.Memory](www.drmemory.org)
+    * Windows 10 64bit:Valgrind in WSL
